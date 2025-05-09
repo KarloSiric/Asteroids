@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-08 22:09:52
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 17:19:57
+* @Last Modified time: 2025-05-09 21:26:58
 */
 
 /* 
@@ -25,6 +25,7 @@ int main(void)
    // We initialize the window first
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Asteroids game in C using Raylib");
     SetTargetFPS(100);
+    SetExitKey(0);                  // disabling the exit key by default
 
                                     // We initialize the Game itself
     Game game;

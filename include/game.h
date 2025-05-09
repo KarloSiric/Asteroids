@@ -9,10 +9,22 @@
 
 // Game states
 typedef enum GameState {
-    MENU,
+    MAIN_MENU,
     GAMEPLAY,
-    GAME_OVER
+    GAME_OVER,
+    OPTIONS_MENU,                                         // NEW included, wasnt present in v1.0
+    CONTROLS_MENU,                                        // NEW included, wasnt present in v1.0
+    PAUSED                                                // NEW included, wasnt present in v1.0
 } GameState;
+
+// Adding game settings structure architecture, NEW, not present within the v1.0
+typedef struct GameSettings
+{
+    bool soundEnabled;
+    bool musicEnabled;
+    bool showFPS;
+    int difficulty;                                  // 0 - easy, 1 - normal, 2 - Hard
+} GameSettings;
 
 // Game Architecture
 typedef struct Game {
@@ -22,6 +34,12 @@ typedef struct Game {
     Asteroid asteroids[MAX_ASTEROIDS];
     Bullet bullets[MAX_BULLETS];
     Star stars[MAX_STARS];                            // added the array of Star structures that we need
+
+    // adding MENU related things
+    int selectedOption;                               // used for tracking which menu option has been selected
+    GameSettings settings;                            // structure containg game settings to the game
+
+    int highScore;                                    // added additionally as well not present in v1.0
 } Game;
 
 /* 
