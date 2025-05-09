@@ -5,6 +5,7 @@
 #include "player.h"
 #include "asteroids.h"
 #include "bullet.h"
+#include "stars.h"                                        // included the stars.h wasnt present in v1.0
 
 // Game states
 typedef enum GameState {
@@ -17,11 +18,11 @@ typedef enum GameState {
 typedef struct Game {
     GameState state;
     int score;
-    Player player;           // still missing needs to be implemented in player.h first
+    Player player;                                    // still missing needs to be implemented in player.h first
     Asteroid asteroids[MAX_ASTEROIDS];
     Bullet bullets[MAX_BULLETS];
+    Star stars[MAX_STARS];                            // added the array of Star structures that we need
 } Game;
-
 
 /* 
  * If a bullet was just an array: -> {1, 2, 3, 4}

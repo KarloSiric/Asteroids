@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 09:11:58
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 17:19:18
+* @Last Modified time: 2025-05-09 18:26:16
 */
 
 /*
@@ -15,6 +15,7 @@
 #include "asteroids.h"
 #include "bullet.h"
 #include "player.h"
+#include "stars.h"
 #include "utils.h"
 #include "game.h"
 
@@ -32,6 +33,8 @@ void initGame(Game *game)
     InitAsteroid(game->asteroids);          // initialize the asteroids
 
     InitBullets(game->bullets);             // initialize the bullets
+
+    InitStars(game->stars);                 // Initialize the stars, added new not present in v1.0
 
     for (int i = 0; i < 5; i++)
     {
@@ -73,6 +76,7 @@ void UpdateGame(Game *game)
 
         UpdateAsteroid(game->asteroids);
         UpdateBullets(game->bullets);
+        UpdateStars(game->stars);
 
         // We check the collisions
         checkCollisions(&game->player, game->asteroids, game->bullets, &game->score, &game->state);
@@ -95,6 +99,7 @@ void DrawGame(Game *game)
         DrawAsteroids(game->asteroids);
         DrawBullets(game->bullets);
         DrawPlayer(game->player);
+        DrawStars(game->stars);
 
         // For drawing the score on the screen
         DrawText(TextFormat("SCORE: %d", game->score), 10, 10, 20, WHITE);

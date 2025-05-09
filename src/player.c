@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 10:18:25
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 17:47:00
+* @Last Modified time: 2025-05-09 17:59:19
 */
 
 
@@ -54,8 +54,7 @@ void UpdatePlayer(Player *player, Bullet bullets[])
 
     // now we apply these velocities to the position
     player->position.x += player->velocity.x;
-    player->position.y += player->velocity.y;
-
+    player->position.y += player->velocity.y; 
     // now we can apply the space drag if we can call it that
     player->velocity.x *= SHIP_DRAG;
     player->velocity.y *= SHIP_DRAG;
@@ -81,6 +80,7 @@ void DrawPlayer(Player player)
     Vector2 v1, v2, v3;
     float cosA = cos(player.rotation * DEG2RAD);
     float sinA = sin(player.rotation * DEG2RAD);
+    
     // now we need to form three points that are going to be connected tgether to form the ship
     v1.x = player.position.x + cosA * SHIP_SIZE;
     v1.y = player.position.y + sinA * SHIP_SIZE;
