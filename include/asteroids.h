@@ -5,7 +5,7 @@
 
 // Defining constants
 #define MAX_ASTEROIDS       20
-#define ASTEROID_SPEED      2
+#define ASTEROID_SPEED      1.0f        // Reduced the asteroid speed from 2 to 1.0 (v1.0 had 2.0)
 
 // Asteroids structure code
 typedef struct Asteroid {

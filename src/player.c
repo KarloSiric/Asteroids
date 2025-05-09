@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 10:18:25
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 12:35:26
+* @Last Modified time: 2025-05-09 17:47:00
 */
 
 
@@ -25,6 +25,7 @@ void InitPlayer(Player *player)
     player->velocity = (Vector2){ 0, 0 };
     player->rotation = 0;
     player->isThrusting = false;
+    player->shootCooldown = 0;
 }
 
 // Now we update the player
@@ -56,16 +57,22 @@ void UpdatePlayer(Player *player, Bullet bullets[])
     player->position.y += player->velocity.y;
 
     // now we can apply the space drag if we can call it that
-    player->velocity.x *= 0.98f;
-    player->velocity.y *= 0.98f;
+    player->velocity.x *= SHIP_DRAG;
+    player->velocity.y *= SHIP_DRAG;
 
     // we can wrap this around the position, so this doesnt allow it to go outside of the borders
     WrapPosition(&player->position);
 
+    // Adding the shooting part (version 1.0 did not contain this piece of code)
+    if (player->shootCooldown > 0)
+    {
+        player->shootCooldown--;
+    }
     // Programming the shooting part
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyPressed(KEY_SPACE) && player->shootCooldown == 0)
     {
         ShootBullets(bullets, player->position, player->rotation);
+        player->shootCooldown = BULLET_COOLDOWN;                     // included in the new version, not prevent in v1.0
     }
 }
 
