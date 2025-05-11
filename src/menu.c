@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 19:03:42
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 16:58:16
+* @Last Modified time: 2025-05-11 18:17:47
 */
 
 /*
@@ -15,8 +15,10 @@
 #include "game.h"
 #include "utils.h"
 #include "resolution.h"
+#include "sound.h"
 #include <raylib.h>
 #include <stdio.h>
+#include <stdlib.h> // Added for NULL
 
 // External globals for screen dimensions
 extern int screenWidth;
@@ -76,36 +78,45 @@ void DrawMainMenu(Game *game)
 void UpdateMainMenu(Game *game)
 {
     // Navigation bar
+    bool menuChanged = false;
+    
     if (IsKeyPressed(KEY_DOWN))
     {
         game->selectedOption = (game->selectedOption + 1) % MENU_MAIN_COUNT;
-        // play sound here
+        menuChanged = true;
     }
     else if (IsKeyPressed(KEY_UP))
     {
         // FIX: Proper handling of wrap-around when going up in menu
         game->selectedOption = (game->selectedOption - 1 + MENU_MAIN_COUNT) % MENU_MAIN_COUNT;
+        menuChanged = true;
     }
 
+    // Play sound on menu navigation
+    if (menuChanged && game->soundManager != NULL && game->settings.soundEnabled) {
+        PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+    }
 
     // Selected
     if (IsKeyPressed(KEY_ENTER))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         switch(game->selectedOption)
         {
             case MENU_START:
                 game->state = GAMEPLAY;
-                // play the sounds needed
                 break;
             case MENU_OPTIONS:
                 game->state = OPTIONS_MENU;            
                 game->selectedOption = 0;               // need to reset the select for this to start from 0
-                // play menu sound
                 break;
             case MENU_CONTROLS:
                 game->state = CONTROLS_MENU;
                 game->selectedOption = 0;                // need to reset the select option
-                // play the sound menu
                 break;
             case MENU_EXIT:
                 // The proper Cleanup happens in the mai part of the main loop WindowShouldClose()
@@ -165,27 +176,48 @@ void DrawOptionsMenu(Game *game)
 void UpdateOptionsMenu(Game *game)
 {
     // Navigation
+    bool menuChanged = false;
+    
     if (IsKeyPressed(KEY_DOWN))
     {
         game->selectedOption = (game->selectedOption + 1) % MENU_OPTIONS_COUNT;
-        // play the sound here
+        menuChanged = true;
     }
     else if (IsKeyPressed(KEY_UP))
     {
         game->selectedOption = (game->selectedOption - 1 + MENU_OPTIONS_COUNT) % MENU_OPTIONS_COUNT;
+        menuChanged = true;
+    }
+
+    // Play sound on menu navigation
+    if (menuChanged && game->soundManager != NULL && game->settings.soundEnabled) {
+        PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
     }
 
     // Change settings with left/right keybinds
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_LEFT))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         // toggle or cycle values
         switch(game->selectedOption)
         {
             case MENU_SOUND:
                 game->settings.soundEnabled = !game->settings.soundEnabled;
+                // Update sound manager
+                if (game->soundManager != NULL) {
+                    ToggleSoundEnabled(game->soundManager, game->settings.soundEnabled);
+                }
                 break;
             case MENU_MUSIC:
                 game->settings.musicEnabled = !game->settings.musicEnabled;
+                // Update music manager
+                if (game->soundManager != NULL) {
+                    ToggleMusicEnabled(game->soundManager, game->settings.musicEnabled);
+                }
                 break;
             case MENU_FPS:
                 game->settings.showFPS = !game->settings.showFPS;
@@ -221,6 +253,11 @@ void UpdateOptionsMenu(Game *game)
 
     if (IsKeyPressed(KEY_ENTER))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         if (game->selectedOption == MENU_BACK)
         {
             game->state = MAIN_MENU;
@@ -231,6 +268,11 @@ void UpdateOptionsMenu(Game *game)
     // Going back using ESC keys
     if (IsKeyPressed(KEY_ESCAPE))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         game->state = MAIN_MENU;
         game->selectedOption = MENU_OPTIONS;
     }
@@ -238,6 +280,8 @@ void UpdateOptionsMenu(Game *game)
 
 void DrawControlsMenu(Game *game)
 {
+    (void)game;  // Silence the unused parameter warning
+    
     DrawMenuTitle("CONTROLS");
 
     int startY = screenHeight / 2 - 150; // Start higher to fit more controls
@@ -322,6 +366,11 @@ void UpdateControlsMenu(Game *game)
     // Only need to handle back action
     if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         game->state = MAIN_MENU;
         game->selectedOption = MENU_CONTROLS;           // usually is always selected at main menu controls
     }
@@ -385,13 +434,26 @@ void DrawPauseMenu(Game *game)
 void UpdatePauseMenu(Game *game)
 {
     // We only need two options
+    bool menuChanged = false;
+    
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_UP))
     {
         game->selectedOption = !game->selectedOption;               // toggle between 0 and 1
+        menuChanged = true;
+    }
+
+    // Play sound on menu navigation
+    if (menuChanged && game->soundManager != NULL && game->settings.soundEnabled) {
+        PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
     }
 
     if (IsKeyPressed(KEY_ENTER))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         if (game->selectedOption == 0)
         {
             // Resume
@@ -406,6 +468,11 @@ void UpdatePauseMenu(Game *game)
 
     if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P))
     {
+        // Play selection sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         game->state = GAMEPLAY;
     }
 }
