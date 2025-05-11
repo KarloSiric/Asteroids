@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 15:03:38
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 15:18:08
+* @Last Modified time: 2025-05-10 00:09:32
 */
 
 /* 
@@ -43,7 +43,7 @@ void UpdateBullets(Bullet *bullets)
             bullets[i].position.y += bullets[i].velocity.y;
 
             // We wrap the around edges as well like asteroids
-            WrapPosition(&bullets[i].position);
+            // WrapPosition(&bullets[i].position);                      // removing the wrapping of bullets
 
             // we need to deal with the bullet lifetime
             bullets[i].lifeTime--;

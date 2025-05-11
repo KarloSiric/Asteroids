@@ -5,9 +5,12 @@
 
 // Defining constants
 
-#define MAX_BULLETS      30
-#define BULLET_SPEED     8                        // eventually improved the shooting as well -> version 1.0 had 5 pixels speed, bumped to 8
-#define BULLET_COOLDOWN  15                       // new constant added for bullet cd between each shot in 15 (frames)
+#define MAX_BULLETS      100
+#define BULLET_SPEED     10                         // eventually improved the shooting as well -> version 1.0 had 5 pixels speed, bumped to 8
+#define BULLET_COOLDOWN  0                          // new constant added for bullet cd between each shot in 15 (frames)
+
+
+
 // Bullets structure
 typedef struct Bullet {
     Vector2 position;

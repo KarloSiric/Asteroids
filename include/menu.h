@@ -16,10 +16,12 @@
 #define MENU_MUSIC                      1
 #define MENU_FPS                        2
 #define MENU_DIFFICULTY                 3
-#define MENU_BACK                       4
-#define MENU_OPTIONS_COUNT              5
+#define MENU_RESOLUTION                 4
+#define MENU_FULLSCREEN                 5                           // added this new setting for fullscreen game NEW
+#define MENU_BACK                       6
+#define MENU_OPTIONS_COUNT              7
 
-// Making function prototypes for the fully functional menu
+                                                                    // Making function prototypes for the fully functional menu
 void DrawMainMenu(Game *game);
 void DrawOptionsMenu(Game *game);
 void DrawControlsMenu(Game *game);
@@ -29,4 +31,4 @@ void UpdateOptionsMenu(Game *game);
 void UpdateControlsMenu(Game *game);
 void UpdatePauseMenu(Game *game);
 
-#endif                                   // end of the MENU_H header config
+#endif                                                               // end of the MENU_H header config

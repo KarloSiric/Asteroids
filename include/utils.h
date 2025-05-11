@@ -8,8 +8,8 @@
 #include "asteroids.h"
 
 // Defining constants
-#define SCREEN_WIDTH      1024
-#define SCREEN_HEIGHT     768
+#define SCREEN_WIDTH      1280
+#define SCREEN_HEIGHT     920
 
 // Function Prototypes
 bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, float radius2);

@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 19:03:42
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 21:30:36
+* @Last Modified time: 2025-05-11 14:38:35
 */
 
 /*
@@ -120,11 +120,13 @@ void DrawOptionsMenu(Game *game)
     char soundText[20];
     char musicText[20];
     char fpsText[20];
-    char difficultyText[30]; // Increased size to be safe
+    char difficultyText[30];                                                        // Increased size to be safe
+    char fullscreenText[30];                                                        // added a buffer to hold FULLSCREEN NEW!!
 
     sprintf(soundText, "SOUND: %s", game->settings.soundEnabled ? "ON" : "OFF");
     sprintf(musicText, "MUSIC: %s", game->settings.musicEnabled ? "ON" : "OFF");
     sprintf(fpsText, "SHOW FPS: %s", game->settings.showFPS ? "ON" : "OFF");
+    sprintf(fullscreenText, "FULLSCREEN: %s", game->settings.fullscreen ? "ON" : "OFF");
 
     // setting difficulty switch case
     switch(game->settings.difficulty)
@@ -144,7 +146,8 @@ void DrawOptionsMenu(Game *game)
     DrawMenuOption(musicText, startY + spacing, game->selectedOption == MENU_MUSIC);
     DrawMenuOption(fpsText, startY + spacing * 2, game->selectedOption == MENU_FPS);
     DrawMenuOption(difficultyText, startY +  spacing * 3, game->selectedOption == MENU_DIFFICULTY);
-    DrawMenuOption("BACK", startY + spacing * 4, game->selectedOption == MENU_BACK);
+    DrawMenuOption(fullscreenText, startY + spacing * 4, game->selectedOption == MENU_FULLSCREEN); 
+    DrawMenuOption("BACK", startY + spacing * 5, game->selectedOption == MENU_BACK);
 
     // Instructions in the menu
     DrawText("<- -> to change settings", SCREEN_WIDTH / 2 - MeasureText("<- -> to change settings", 15) / 2, 
@@ -178,6 +181,10 @@ void UpdateOptionsMenu(Game *game)
                 break;
             case MENU_FPS:
                 game->settings.showFPS = !game->settings.showFPS;
+                break;
+            case MENU_FULLSCREEN:
+                game->settings.fullscreen = !game->settings.fullscreen;
+                ToggleFullscreen();
                 break;
             case MENU_DIFFICULTY:
                 if (IsKeyPressed(KEY_RIGHT))

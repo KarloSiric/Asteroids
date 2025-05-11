@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 09:11:58
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 21:28:23
+* @Last Modified time: 2025-05-11 15:49:06
 */
 
 /*
@@ -16,18 +16,37 @@
 #include "bullet.h"
 #include "menu.h"
 #include "player.h"
+#include "resolution.h"
 #include "stars.h"
 #include "utils.h"
 #include "game.h"
+
+const int RESOLUTIONS[4][2] = {
+    {800, 600},          // 800x600
+    {1024, 768},         // 1: 1024x768
+    {1280, 720},         // 2: 1280x720 HD
+    {1920, 1080}         // 3: 1920x1080 FULL HD
+};
+
+const char *RESOLUTION_NAMES[4] = {
+    "800x600",
+    "1024x768",
+    "1280x720 (HD)",
+    "1920x1080 (FHD)"
+};
+
+
+
 
 // We are passing the pointer to the game structure so we need to use -> in this case
 void initGame(Game *game) 
 {
     // dereferencing the pointer and using -> syntax in this case
     game->state = MAIN_MENU;                     // we initially set this to the MENU part of the game
-    game->score = 0;                        // we then set the score to be equal to 0 for its own sake of the game
+    game->score = 0;                             // we then set the score to be equal to 0 for its own sake of the game
     game->highScore = 0;
     game->selectedOption = 0;                    // added new into this version, did not have it in v1.0
+    game->settings.fullscreen = false;           // we initialize it to start with false at the start of the game
 
     // Initializing settings
     game->settings.soundEnabled = true;
@@ -44,6 +63,8 @@ void initGame(Game *game)
     InitBullets(game->bullets);             // initialize the bullets
 
     InitStars(game->stars);                 // Initialize the stars, added new not present in v1.0
+
+    InitResolutions(game);
 
     for (int i = 0; i < 5; i++)
     {

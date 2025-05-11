@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 12:46:09
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 15:21:14
+* @Last Modified time: 2025-05-09 23:33:37
 */
 
 
@@ -150,4 +150,3 @@ void SplitAsteroid(Asteroid *asteroids, int index)
         }
     }
 }
-

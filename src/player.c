@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 10:18:25
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 17:59:19
+* @Last Modified time: 2025-05-10 00:07:21
 */
 
 
@@ -68,7 +68,7 @@ void UpdatePlayer(Player *player, Bullet bullets[])
         player->shootCooldown--;
     }
     // Programming the shooting part
-    if (IsKeyPressed(KEY_SPACE) && player->shootCooldown == 0)
+    if (IsKeyDown(KEY_SPACE) && player->shootCooldown == 0)
     {
         ShootBullets(bullets, player->position, player->rotation);
         player->shootCooldown = BULLET_COOLDOWN;                     // included in the new version, not prevent in v1.0
