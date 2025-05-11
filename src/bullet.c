@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 15:03:38
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 16:40:28
+* @Last Modified time: 2025-05-11 16:57:48
 */
 
 /* 
@@ -16,14 +16,17 @@
 #include <math.h>
 #include <time.h>
 
+// External globals for screen dimensions
+extern int screenWidth;
+extern int screenHeight;
+
 void InitBullets(Bullet *bullets)
 {
-    /* this echnique is known as the object pooling where we dont use dynamic memory allocation 
+    /* this technique is known as the object pooling where we don't use dynamic memory allocation 
      * but instead, we use only the existing amount of bullets or objects that we need
-     * and instead of creating and destroying the existing ones, we just use and iteretae over the 
-     * ones that ae already existing, so we use the active flag boolean that allows us to keep track
-     * of everything that we will be using, this is better becauase we allow memory leaks this way
-     * and this allows us to not have to deal with malloc and so forth.
+     * and instead of creating and destroying the existing ones, we just use and iterate over the 
+     * ones that are already existing, so we use the active flag boolean that allows us to keep track
+     * of everything that we will be using
      */
     for (int i = 0; i < MAX_BULLETS; i++)
     {
@@ -35,22 +38,37 @@ void UpdateBullets(Bullet *bullets)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        // we take the bullets that are active
+        // Update active bullets
         if(bullets[i].active)
         {
-            // now we need to move the bullets
-            bullets[i].position.x += bullets[i].velocity.x;             // Simple physics so changing the position over time is just applying velocity to it
+            // Move the bullets
+            bullets[i].position.x += bullets[i].velocity.x;
             bullets[i].position.y += bullets[i].velocity.y;
 
-            // We wrap the around edges as well like asteroids
-            // WrapPosition(&bullets[i].position);                      // removing the wrapping of bullets
+            // We don't wrap bullets around edges anymore - they disappear offscreen
+            
+            // If bullet goes off-screen, deactivate it
+            if (bullets[i].position.x < 0 || 
+                bullets[i].position.x > screenWidth ||
+                bullets[i].position.y < 0 || 
+                bullets[i].position.y > screenHeight)
+            {
+                bullets[i].active = false;
+                continue;
+            }
 
-            // we need to deal with the bullet lifetime
+            // Update lifetime
             bullets[i].lifeTime--;
-            // in case taht the lifetime of a bullet is less or equal to 0 then we need to remove the bullet
+            
+            // Fade bullets as they get older
+            if (bullets[i].lifeTime < 40) {
+                bullets[i].alpha = bullets[i].lifeTime / 40.0f;
+            }
+            
+            // Deactivate expired bullets
             if (bullets[i].lifeTime <= 0)
             {
-                bullets[i].active = false;                              // we make it not active, because we delete, since we only render active "objects"
+                bullets[i].active = false;
             }
         }
     }
@@ -63,26 +81,58 @@ void DrawBullets(Bullet *bullets)
     {
         if (bullets[i].active)
         {
-            DrawCircle(bullets[i].position.x, bullets[i].position.y, bullets[i].radius, WHITE);
+            // Create a color with adjusted alpha for fading effect
+            Color bulletColor = bullets[i].color;
+            bulletColor.a = (unsigned char)(bullets[i].alpha * 255.0f);
+            
+            // Draw the bullet
+            DrawCircle(bullets[i].position.x, bullets[i].position.y, bullets[i].radius, bulletColor);
+            
+            // Draw a smaller inner circle for a more interesting visual
+            Color innerColor = WHITE;
+            innerColor.a = (unsigned char)(bullets[i].alpha * 255.0f);
+            DrawCircle(bullets[i].position.x, bullets[i].position.y, bullets[i].radius * 0.5f, innerColor);
         }
     }
 }
 
 // We also need to program the shooting of the bullets
-
 void ShootBullets(Bullet *bullets, Vector2 position, float rotation)
 {
-    for (int i = 0; i < MAX_BULLETS; i++)
+    // We'll shoot 3 bullets with a slight spread for a more interesting effect
+    for (int spread = -1; spread <= 1; spread++)
     {
-        // if it is not active we need to make it active so that's why
-        if(!bullets[i].active)
+        // Find an inactive bullet to use
+        for (int i = 0; i < MAX_BULLETS; i++)
         {
-            bullets[i].position = position;
-            bullets[i].velocity.x = cos(rotation * DEG2RAD) * BULLET_SPEED;
-            bullets[i].velocity.y = sin(rotation * DEG2RAD) * BULLET_SPEED;
-            bullets[i].radius = 3;
-            bullets[i].lifeTime = 120;                                     // active life bullet time
-            bullets[i].active = true;                                      // we activate the bullet that we have just made
+            if(!bullets[i].active)
+            {
+                // Get the actual rotation with spread
+                float bulletRotation = rotation + spread * BULLET_SPREAD;
+                
+                // Calculate velocity based on spread-adjusted rotation
+                float cosA = cos(bulletRotation * DEG2RAD);
+                float sinA = sin(bulletRotation * DEG2RAD);
+                
+                bullets[i].position = position;
+                bullets[i].velocity.x = cosA * BULLET_SPEED;
+                bullets[i].velocity.y = sinA * BULLET_SPEED;
+                bullets[i].radius = 3 + (float)abs(spread) * 0.5f; // Slightly different sizes
+                bullets[i].lifeTime = BULLET_LIFETIME - abs(spread) * 10; // Center bullet lasts longer
+                bullets[i].active = true;
+                bullets[i].alpha = 1.0f;
+                
+                // Set different colors for visual interest
+                if (spread == 0) {
+                    bullets[i].color = (Color){ 255, 255, 255, 255 }; // White for center
+                } else if (spread == -1) {
+                    bullets[i].color = (Color){ 0, 200, 255, 255 };   // Blue-ish
+                } else {
+                    bullets[i].color = (Color){ 255, 200, 0, 255 };   // Yellow-ish
+                }
+                
+                break; // We found an inactive bullet to use, so break the inner loop
+            }
         }
     }
 }

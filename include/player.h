@@ -17,14 +17,17 @@ typedef struct Player {
     Vector2 position;
     Vector2 velocity;
     float rotation;
+    float rotationVelocity;    // Added for smoother rotation
     bool isThrusting;
-    int shootCooldown;                             // included the new variable the shootCooldown (version 1.0 didn't have this)
-
+    int shootCooldown;
+    int controlMode;           // 0 = keyboard, 1 = mouse
 } Player;
 
 // Function prototypes
 void InitPlayer(Player *player);
 void UpdatePlayer(Player *player, Bullet bullets[]);
+void UpdatePlayerKeyboard(Player *player, Bullet bullets[]); // Added for keyboard controls
+void UpdatePlayerMouse(Player *player, Bullet bullets[]);    // Added for mouse controls
 void DrawPlayer(Player player);
 
 #endif                        // PLAYER_H end config

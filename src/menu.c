@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 19:03:42
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 16:40:55
+* @Last Modified time: 2025-05-11 16:58:16
 */
 
 /*
@@ -240,36 +240,75 @@ void DrawControlsMenu(Game *game)
 {
     DrawMenuTitle("CONTROLS");
 
-    int startY = screenHeight / 2 - 100;
-    int spacing = 40;
+    int startY = screenHeight / 2 - 150; // Start higher to fit more controls
+    int spacing = 30; // Reduced spacing to fit more items
+    int currentY = startY;
+
+    // Keyboard controls section
+    DrawText("KEYBOARD CONTROLS:", 
+            screenWidth / 2 - MeasureText("KEYBOARD CONTROLS:", 22) / 2,
+            currentY, 22, YELLOW);
+    currentY += spacing + 10;
 
     DrawText("UP / W - Thrust",
             screenWidth / 2 - MeasureText("UP / W - Thrust", 20) / 2,
-                startY, 20, WHITE);
+            currentY, 20, WHITE);
+    currentY += spacing;
 
     DrawText("LEFT / A - Rotate Left", 
             screenWidth / 2 - MeasureText("LEFT / A - Rotate Left", 20) / 2,
-                startY + spacing, 20, WHITE);
+            currentY, 20, WHITE);
+    currentY += spacing;
 
-    // FIX: Corrected MeasureText parameter formatting
     DrawText("RIGHT / D - Rotate Right", 
             screenWidth / 2 - MeasureText("RIGHT / D - Rotate Right", 20) / 2,
-                startY + spacing * 2, 20, WHITE);
+            currentY, 20, WHITE);
+    currentY += spacing;
 
     DrawText("SPACE - Fire", 
             screenWidth / 2 - MeasureText("SPACE - Fire", 20) / 2, 
-                startY + spacing * 3, 20, WHITE);
+            currentY, 20, WHITE);
+    currentY += spacing + 20;
 
+    // Mouse controls section
+    DrawText("MOUSE CONTROLS:", 
+            screenWidth / 2 - MeasureText("MOUSE CONTROLS:", 22) / 2,
+            currentY, 22, YELLOW);
+    currentY += spacing + 10;
+
+    DrawText("MOUSE POSITION - Aim Ship", 
+            screenWidth / 2 - MeasureText("MOUSE POSITION - Aim Ship", 20) / 2,
+            currentY, 20, WHITE);
+    currentY += spacing;
+
+    DrawText("LEFT CLICK - Fire", 
+            screenWidth / 2 - MeasureText("LEFT CLICK - Fire", 20) / 2,
+            currentY, 20, WHITE);
+    currentY += spacing;
+
+    DrawText("RIGHT CLICK - Thrust", 
+            screenWidth / 2 - MeasureText("RIGHT CLICK - Thrust", 20) / 2,
+            currentY, 20, WHITE);
+    currentY += spacing;
+
+    DrawText("M - Switch Control Mode", 
+            screenWidth / 2 - MeasureText("M - Switch Control Mode", 20) / 2,
+            currentY, 20, WHITE);
+    currentY += spacing + 20;
+
+    // General controls
     DrawText("P - Pause Game", 
             screenWidth / 2 - MeasureText("P - Pause Game", 20) / 2, 
-                startY + spacing * 4, 20, WHITE);
+            currentY, 20, WHITE);
+    currentY += spacing;
 
     DrawText("ESC - Return to Menu", 
             screenWidth / 2 - MeasureText("ESC - Return to Menu", 20) / 2, 
-                startY + spacing * 5, 20, WHITE);
+            currentY, 20, WHITE);
+    currentY += spacing + 10;
 
     // back button
-    DrawMenuOption("BACK", startY + spacing * 7, true);
+    DrawMenuOption("BACK", currentY, true);
 
     // Instructions for the menu
     DrawText("Press ENTER or ESC to return",
