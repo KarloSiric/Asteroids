@@ -8,6 +8,8 @@
 #include "asteroids.h"
 #include "bullet.h"
 #include "stars.h"                                        // included the stars.h wasnt present in v1.0
+#include "sound.h"
+
 
 // Game states
 typedef enum GameState {
@@ -49,6 +51,7 @@ typedef struct Game {
     Resolution resolutions[MAX_RESOLUTIONS];
     int defaultScreenWidth;
     int defaultScreenHeight;
+    SoundManager *soundManager;                            // Added sound manager pointer
 } Game;
 
 /* 

@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 09:11:58
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 16:42:28
+* @Last Modified time: 2025-05-11 18:16:46
 */
 
 /*
@@ -12,6 +12,7 @@
 // Includes
 #include <raylib.h>
 #include <raymath.h>
+#include <stdlib.h> // Add this for NULL
 #include "asteroids.h"
 #include "bullet.h"
 #include "menu.h"
@@ -20,6 +21,7 @@
 #include "stars.h"
 #include "utils.h"
 #include "game.h"
+#include "sound.h"
 
 // External globals for screen dimensions
 extern int screenWidth;
@@ -53,6 +55,12 @@ void initGame(Game *game)
 
     InitResolutions(game);                  // Initialize resolutions AFTER other components
 
+    // Initialize the sound manager (if it exists)
+    if (game->soundManager != NULL) {
+        ToggleSoundEnabled(game->soundManager, game->settings.soundEnabled);
+        ToggleMusicEnabled(game->soundManager, game->settings.musicEnabled);
+    }
+
     for (int i = 0; i < 5; i++)
     {
         SpawnAsteroids(game->asteroids);
@@ -61,6 +69,11 @@ void initGame(Game *game)
 
 void UpdateGame(Game *game)
 {
+    // Update music if sound manager exists
+    if (game->soundManager != NULL) {
+        UpdateGameMusic(game->soundManager, game);
+    }
+
     // Check first if we should exit the application
     if (WindowShouldClose()) 
     {
@@ -74,6 +87,12 @@ void UpdateGame(Game *game)
     {
         game->state = PAUSED;
         game->selectedOption = 0;   // Default to Resume
+        
+        // Pause music when game is paused
+        if (game->soundManager != NULL) {
+            PauseGameMusic(game->soundManager);
+        }
+        
         return;
     }
     
@@ -82,6 +101,12 @@ void UpdateGame(Game *game)
     {
         game->state = MAIN_MENU;
         game->selectedOption = 0;   // Default to first option
+        
+        // Play menu select sound
+        if (game->soundManager != NULL && game->settings.soundEnabled) {
+            PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+        }
+        
         return;
     }
 
@@ -108,13 +133,57 @@ void UpdateGame(Game *game)
             break;
 
         case GAMEPLAY:
-            UpdatePlayer(&game->player, game->bullets); 
-            UpdateAsteroid(game->asteroids);
-            UpdateBullets(game->bullets);
-            UpdateStars(game->stars);
+            {  // Add braces to create a new scope for local variables
+                // Store previous thrusting state to detect changes
+                bool wasThrustingBefore = game->player.isThrusting;
+                int previousShootCooldown = game->player.shootCooldown;
+                
+                UpdatePlayer(&game->player, game->bullets); 
+                
+                // Play thrust sound if player just started thrusting
+                if (!wasThrustingBefore && game->player.isThrusting) {
+                    if (game->soundManager != NULL && game->settings.soundEnabled) {
+                        PlayGameSound(game->soundManager, SOUND_THRUST);
+                    }
+                }
+                
+                // Play shooting sound
+                if (previousShootCooldown == 0 && game->player.shootCooldown > 0) {
+                    if (game->soundManager != NULL && game->settings.soundEnabled) {
+                        PlayGameSound(game->soundManager, SOUND_SHOOT);
+                    }
+                }
+                
+                UpdateAsteroid(game->asteroids);
+                UpdateBullets(game->bullets);
+                UpdateStars(game->stars);
 
-            // We check the collisions
-            checkCollisions(&game->player, game->asteroids, game->bullets, &game->score, &game->state);    
+                // We check the collisions - added sound support for collisions
+                GameState previousState = game->state;
+                int previousScore = game->score;
+                
+                checkCollisions(&game->player, game->asteroids, game->bullets, &game->score, &game->state);
+                
+                // If score changed, an asteroid was hit
+                if (game->score > previousScore) {
+                    if (game->soundManager != NULL && game->settings.soundEnabled) {
+                        // Choose between small and large explosion sound randomly
+                        if (GetRandomValue(0, 1) == 0) {
+                            PlayGameSound(game->soundManager, SOUND_EXPLOSION_SMALL);
+                        } else {
+                            PlayGameSound(game->soundManager, SOUND_EXPLOSION_BIG);
+                        }
+                    }
+                }
+                
+                // If state changed to GAME_OVER, player collided with asteroid
+                if (previousState != GAME_OVER && game->state == GAME_OVER) {
+                    if (game->soundManager != NULL && game->settings.soundEnabled) {
+                        PlayGameSound(game->soundManager, SOUND_EXPLOSION_BIG);
+                        PlayGameSound(game->soundManager, SOUND_GAME_OVER);
+                    }
+                }
+            }
             break;
 
         case GAME_OVER:
@@ -129,12 +198,22 @@ void UpdateGame(Game *game)
             {
                 ResetGame(game);
                 game->state = GAMEPLAY;
+                
+                // Play select sound
+                if (game->soundManager != NULL && game->settings.soundEnabled) {
+                    PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+                }
             }
             else if (IsKeyPressed(KEY_ESCAPE))
             {
                 ResetGame(game);
                 game->state = MAIN_MENU;
                 game->selectedOption = 0;
+                
+                // Play select sound
+                if (game->soundManager != NULL && game->settings.soundEnabled) {
+                    PlayGameSound(game->soundManager, SOUND_MENU_SELECT);
+                }
             }
             // Keep updating stars for visual effect
             UpdateStars(game->stars);

@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-08 22:09:52
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 16:46:11
+* @Last Modified time: 2025-05-11 18:17:53
 */
 
 /* 
@@ -17,6 +17,7 @@
 #include "utils.h"
 #include "game.h"
 #include "resolution.h"
+#include "sound.h"
 
 // Global screen dimensions
 int screenWidth = SCREEN_WIDTH;
@@ -30,7 +31,7 @@ int main(void)
     screenWidth = SCREEN_WIDTH;
     screenHeight = SCREEN_HEIGHT;
    
-    // Set a custom trace log callback to ignore non-important trace logs
+    // Set a custom trace log level to ignore non-important trace logs
     // Helps avoid spamming the console with "Viewport changed" messages when resizing
     SetTraceLogLevel(LOG_WARNING);
     
@@ -39,13 +40,18 @@ int main(void)
     
     // Enable vsync
     SetWindowState(FLAG_VSYNC_HINT);
-    SetTargetFPS(240);
+    SetTargetFPS(60);  // Changed from 240 to 60 for better sound timing
     
     // Disable default exit key (escape)
     SetExitKey(0);
 
+    // Initialize the sound system
+    SoundManager soundManager;
+    InitSoundManager(&soundManager);
+    
     // Initialize the Game itself
     Game game;
+    game.soundManager = &soundManager;  // Link the sound manager to the game
     initGame(&game);
 
     while(!WindowShouldClose())
@@ -65,6 +71,10 @@ int main(void)
         // End Drawing
         EndDrawing();
     }
+    
+    // Unload game sounds before closing
+    UnloadGameSounds(&soundManager);
+    
     CloseWindow();
     return 0;
 }
