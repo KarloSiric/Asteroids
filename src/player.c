@@ -2,9 +2,8 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 10:18:25
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-10 00:07:21
+* @Last Modified time: 2025-05-11 16:40:53
 */
-
 
 /*
  * Main C program for controlling and managing the player sprite, its functionalities, how he behaves
@@ -17,11 +16,14 @@
 #include "utils.h"
 #include <math.h>
 
+// External globals for screen dimensions
+extern int screenWidth;
+extern int screenHeight;
 
 void InitPlayer(Player *player)
 {
     // Setting up initially
-    player->position = (Vector2){ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    player->position = (Vector2){ screenWidth / 2, screenHeight / 2};
     player->velocity = (Vector2){ 0, 0 };
     player->rotation = 0;
     player->isThrusting = false;

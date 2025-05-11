@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 15:18:26
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 16:35:34
+* @Last Modified time: 2025-05-11 16:47:04
 */
 
 /*
@@ -18,6 +18,10 @@
 #include <raylib.h>
 #include <math.h>
 
+// External reference to global screen dimensions defined in main.c
+extern int screenWidth;
+extern int screenHeight;
+
 bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, float radius2)
 {
     float dx = center2.x - center1.x;  
@@ -29,22 +33,22 @@ bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, floa
 
 void WrapPosition(Vector2 *position)
 {
-    if (position->x > SCREEN_WIDTH)
+    if (position->x > screenWidth)
     {
         position->x = 0;
     }
     else if (position->x < 0)
     {
-        position->x = SCREEN_WIDTH;
+        position->x = screenWidth;
     }
     
-    if (position->y > SCREEN_HEIGHT)
+    if (position->y > screenHeight)
     {
         position->y = 0;
     }
     else if (position->y < 0)
     {
-        position->y = SCREEN_HEIGHT;
+        position->y = screenHeight;
     }
 }
 

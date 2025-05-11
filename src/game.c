@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 09:11:58
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 15:49:06
+* @Last Modified time: 2025-05-11 16:42:28
 */
 
 /*
@@ -21,22 +21,9 @@
 #include "utils.h"
 #include "game.h"
 
-const int RESOLUTIONS[4][2] = {
-    {800, 600},          // 800x600
-    {1024, 768},         // 1: 1024x768
-    {1280, 720},         // 2: 1280x720 HD
-    {1920, 1080}         // 3: 1920x1080 FULL HD
-};
-
-const char *RESOLUTION_NAMES[4] = {
-    "800x600",
-    "1024x768",
-    "1280x720 (HD)",
-    "1920x1080 (FHD)"
-};
-
-
-
+// External globals for screen dimensions
+extern int screenWidth;
+extern int screenHeight;
 
 // We are passing the pointer to the game structure so we need to use -> in this case
 void initGame(Game *game) 
@@ -55,7 +42,7 @@ void initGame(Game *game)
     game->settings.difficulty = 1;
 
 
-                                            // We initialize the player now
+    // We initialize the player now
     InitPlayer(&game->player);
 
     InitAsteroid(game->asteroids);          // initialize the asteroids
@@ -64,7 +51,7 @@ void initGame(Game *game)
 
     InitStars(game->stars);                 // Initialize the stars, added new not present in v1.0
 
-    InitResolutions(game);
+    InitResolutions(game);                  // Initialize resolutions AFTER other components
 
     for (int i = 0; i < 5; i++)
     {
@@ -155,6 +142,13 @@ void UpdateGame(Game *game)
     }
 }
 
+// Helper function to draw centered text
+static void DrawTextCenteredX(const char *text, int y, int fontSize, Color color) 
+{
+    int textWidth = MeasureText(text, fontSize);
+    DrawText(text, screenWidth/2 - textWidth/2, y, fontSize, color);
+}
+
 // Now we need to actually draw the game
 void DrawGame(Game *game) 
 {
@@ -197,17 +191,17 @@ void DrawGame(Game *game)
 
         case GAME_OVER:
             // Draw game over text
-            DrawText("GAME OVER", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 40) / 2, SCREEN_HEIGHT / 2 - 40, 40, WHITE);
-            DrawText(TextFormat("FINAL SCORE: %d", game->score), SCREEN_WIDTH / 2 - MeasureText(TextFormat("FINAL SCORE: %d", game->score), 20) / 2, SCREEN_HEIGHT / 2, 20, WHITE);
-            DrawText("Press ENTER to play again", SCREEN_WIDTH / 2 - MeasureText("Press ENTER to play again", 20) / 2, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
-            DrawText("Press ESC to return to menu", SCREEN_WIDTH / 2 - MeasureText("Press ESC to return to menu", 20) / 2, SCREEN_HEIGHT / 2 + 70, 20, WHITE);
+            DrawTextCenteredX("GAME OVER", screenHeight / 2 - 40, 40, WHITE);
+            DrawTextCenteredX(TextFormat("FINAL SCORE: %d", game->score), screenHeight / 2, 20, WHITE);
+            DrawTextCenteredX("Press ENTER to play again", screenHeight / 2 + 40, 20, WHITE);
+            DrawTextCenteredX("Press ESC to return to menu", screenHeight / 2 + 70, 20, WHITE);
             break;
     }
 
     // FIXED: Adding fps options enabled - properly use DrawFPS
     if (game->settings.showFPS) 
     {
-        DrawFPS(10, SCREEN_HEIGHT - 30);
+        DrawFPS(10, screenHeight - 30);
     }
 }
 

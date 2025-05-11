@@ -26,6 +26,7 @@ void DrawMainMenu(Game *game);
 void DrawOptionsMenu(Game *game);
 void DrawControlsMenu(Game *game);
 void DrawPauseMenu(Game *game);
+void DrawGameOver(Game *game);
 void UpdateMainMenu(Game *game);
 void UpdateOptionsMenu(Game *game);
 void UpdateControlsMenu(Game *game);

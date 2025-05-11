@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 19:03:42
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 14:38:35
+* @Last Modified time: 2025-05-11 16:40:55
 */
 
 /*
@@ -14,12 +14,17 @@
 #include "menu.h"
 #include "game.h"
 #include "utils.h"
+#include "resolution.h"
 #include <raylib.h>
 #include <stdio.h>
 
+// External globals for screen dimensions
+extern int screenWidth;
+extern int screenHeight;
+
 void DrawMenuTitle(const char *title)
 {
-    DrawText(title, SCREEN_WIDTH / 2 - MeasureText(title, 40) / 2, SCREEN_HEIGHT / 6, 40, WHITE);
+    DrawText(title, screenWidth / 2 - MeasureText(title, 40) / 2, screenHeight / 6, 40, WHITE);
 }
 
 void DrawMenuOption(const char *text, int y, bool selected)
@@ -31,11 +36,11 @@ void DrawMenuOption(const char *text, int y, bool selected)
 
     if (selected)
     {   
-        DrawText(">", SCREEN_WIDTH / 2 - MeasureText(text, fontSize) / 2 - 30,
+        DrawText(">", screenWidth / 2 - MeasureText(text, fontSize) / 2 - 30,
                 y, fontSize, YELLOW);
     }
 
-    DrawText(text, SCREEN_WIDTH / 2 - MeasureText(text, fontSize) / 2, y, fontSize, color);
+    DrawText(text, screenWidth / 2 - MeasureText(text, fontSize) / 2, y, fontSize, color);
 
 }
 
@@ -45,7 +50,7 @@ void DrawMainMenu(Game *game)
     DrawMenuTitle("ASTEROIDS");
 
     // Menu Options
-    int startY = SCREEN_HEIGHT / 2 - 40;
+    int startY = screenHeight / 2 - 40;
     int spacing = 50;                    // for adding space in the menu
     DrawMenuOption("START GAME", startY, game->selectedOption == MENU_START);
     DrawMenuOption("OPTIONS", startY + spacing, game->selectedOption == MENU_OPTIONS);
@@ -54,16 +59,16 @@ void DrawMainMenu(Game *game)
 
     // Footer - FIXED positioning
     DrawText("© 2025 Karlo Siric", 
-             SCREEN_WIDTH / 2 - MeasureText("© 2025 Karlo Siric", 15) / 2, 
-             SCREEN_HEIGHT - 30, 
+             screenWidth / 2 - MeasureText("© 2025 Karlo Siric", 15) / 2, 
+             screenHeight - 30, 
              15, GRAY);
 
     // Showing high score if it exists - FIXED positioning
     if (game->highScore > 0)
     {
         DrawText(TextFormat("HIGH SCORE: %d", game->highScore), 
-                 SCREEN_WIDTH / 2 - MeasureText(TextFormat("HIGH SCORE: %d", game->highScore), 20) / 2, 
-                 SCREEN_HEIGHT - 60, 
+                 screenWidth / 2 - MeasureText(TextFormat("HIGH SCORE: %d", game->highScore), 20) / 2, 
+                 screenHeight - 60, 
                  20, YELLOW);
     }
 }
@@ -114,7 +119,7 @@ void DrawOptionsMenu(Game *game)
 {
     DrawMenuTitle("OPTIONS");
 
-    int startY = SCREEN_HEIGHT / 2 - 60;
+    int startY = screenHeight / 2 - 60;
     int spacing = 50;
 
     char soundText[20];
@@ -122,11 +127,13 @@ void DrawOptionsMenu(Game *game)
     char fpsText[20];
     char difficultyText[30];                                                        // Increased size to be safe
     char fullscreenText[30];                                                        // added a buffer to hold FULLSCREEN NEW!!
+    char resolutionText[40];                                                        // Buffer for resolution text
 
     sprintf(soundText, "SOUND: %s", game->settings.soundEnabled ? "ON" : "OFF");
     sprintf(musicText, "MUSIC: %s", game->settings.musicEnabled ? "ON" : "OFF");
     sprintf(fpsText, "SHOW FPS: %s", game->settings.showFPS ? "ON" : "OFF");
     sprintf(fullscreenText, "FULLSCREEN: %s", game->settings.fullscreen ? "ON" : "OFF");
+    sprintf(resolutionText, "RESOLUTION: %s", game->resolutions[game->currentResolution].name);
 
     // setting difficulty switch case
     switch(game->settings.difficulty)
@@ -146,12 +153,13 @@ void DrawOptionsMenu(Game *game)
     DrawMenuOption(musicText, startY + spacing, game->selectedOption == MENU_MUSIC);
     DrawMenuOption(fpsText, startY + spacing * 2, game->selectedOption == MENU_FPS);
     DrawMenuOption(difficultyText, startY +  spacing * 3, game->selectedOption == MENU_DIFFICULTY);
-    DrawMenuOption(fullscreenText, startY + spacing * 4, game->selectedOption == MENU_FULLSCREEN); 
-    DrawMenuOption("BACK", startY + spacing * 5, game->selectedOption == MENU_BACK);
+    DrawMenuOption(resolutionText, startY + spacing * 4, game->selectedOption == MENU_RESOLUTION);
+    DrawMenuOption(fullscreenText, startY + spacing * 5, game->selectedOption == MENU_FULLSCREEN); 
+    DrawMenuOption("BACK", startY + spacing * 6, game->selectedOption == MENU_BACK);
 
     // Instructions in the menu
-    DrawText("<- -> to change settings", SCREEN_WIDTH / 2 - MeasureText("<- -> to change settings", 15) / 2, 
-             SCREEN_HEIGHT - 30, 15, GRAY);
+    DrawText("<- -> to change settings", screenWidth / 2 - MeasureText("<- -> to change settings", 15) / 2, 
+             screenHeight - 30, 15, GRAY);
 }
 
 void UpdateOptionsMenu(Game *game)
@@ -182,9 +190,22 @@ void UpdateOptionsMenu(Game *game)
             case MENU_FPS:
                 game->settings.showFPS = !game->settings.showFPS;
                 break;
+            case MENU_RESOLUTION:
+                if (IsKeyPressed(KEY_RIGHT))
+                {
+                    // Cycle to next resolution
+                    int newRes = (game->currentResolution + 1) % MAX_RESOLUTIONS;
+                    ChangeResolution(game, newRes);
+                }
+                else
+                {
+                    // Cycle to previous resolution
+                    int newRes = (game->currentResolution - 1 + MAX_RESOLUTIONS) % MAX_RESOLUTIONS;
+                    ChangeResolution(game, newRes);
+                }
+                break;
             case MENU_FULLSCREEN:
-                game->settings.fullscreen = !game->settings.fullscreen;
-                ToggleFullscreen();
+                ToggleFullscreenMode(game);
                 break;
             case MENU_DIFFICULTY:
                 if (IsKeyPressed(KEY_RIGHT))
@@ -194,7 +215,7 @@ void UpdateOptionsMenu(Game *game)
                 else {
                     game->settings.difficulty = (game->settings.difficulty - 1 + 3) % 3;
                 }
-                break; // FIX: Added missing break statement
+                break;
         }
     }
 
@@ -219,32 +240,32 @@ void DrawControlsMenu(Game *game)
 {
     DrawMenuTitle("CONTROLS");
 
-    int startY = SCREEN_HEIGHT / 2 - 100;
+    int startY = screenHeight / 2 - 100;
     int spacing = 40;
 
     DrawText("UP / W - Thrust",
-            SCREEN_WIDTH / 2 - MeasureText("UP / W - Thrust", 20) / 2,
+            screenWidth / 2 - MeasureText("UP / W - Thrust", 20) / 2,
                 startY, 20, WHITE);
 
     DrawText("LEFT / A - Rotate Left", 
-            SCREEN_WIDTH / 2 - MeasureText("LEFT / A - Rotate Left", 20) / 2,
+            screenWidth / 2 - MeasureText("LEFT / A - Rotate Left", 20) / 2,
                 startY + spacing, 20, WHITE);
 
     // FIX: Corrected MeasureText parameter formatting
     DrawText("RIGHT / D - Rotate Right", 
-            SCREEN_WIDTH / 2 - MeasureText("RIGHT / D - Rotate Right", 20) / 2,
+            screenWidth / 2 - MeasureText("RIGHT / D - Rotate Right", 20) / 2,
                 startY + spacing * 2, 20, WHITE);
 
     DrawText("SPACE - Fire", 
-            SCREEN_WIDTH / 2 - MeasureText("SPACE - Fire", 20) / 2, 
+            screenWidth / 2 - MeasureText("SPACE - Fire", 20) / 2, 
                 startY + spacing * 3, 20, WHITE);
 
     DrawText("P - Pause Game", 
-            SCREEN_WIDTH / 2 - MeasureText("P - Pause Game", 20) / 2, 
+            screenWidth / 2 - MeasureText("P - Pause Game", 20) / 2, 
                 startY + spacing * 4, 20, WHITE);
 
     DrawText("ESC - Return to Menu", 
-            SCREEN_WIDTH / 2 - MeasureText("ESC - Return to Menu", 20) / 2, 
+            screenWidth / 2 - MeasureText("ESC - Return to Menu", 20) / 2, 
                 startY + spacing * 5, 20, WHITE);
 
     // back button
@@ -252,8 +273,8 @@ void DrawControlsMenu(Game *game)
 
     // Instructions for the menu
     DrawText("Press ENTER or ESC to return",
-        SCREEN_WIDTH / 2 - MeasureText("Press ENTER or ESC to return", 15) / 2,
-        SCREEN_HEIGHT - 30,
+        screenWidth / 2 - MeasureText("Press ENTER or ESC to return", 15) / 2,
+        screenHeight - 30,
         15, GRAY);
 }
 
@@ -270,18 +291,18 @@ void UpdateControlsMenu(Game *game)
 void DrawPauseMenu(Game *game)
 {
     // Semi-transparent overlay
-    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color) { 0, 0, 0, 150 });
+    DrawRectangle(0, 0, screenWidth, screenHeight, (Color) { 0, 0, 0, 150 });
 
     // Draw the title
     const char *titleText = "PAUSED";
     int titleFontSize = 40;
     int titleWidth = MeasureText(titleText, titleFontSize);
-    int titleX = SCREEN_WIDTH/2 - titleWidth/2;
-    int titleY = SCREEN_HEIGHT/6;
+    int titleX = screenWidth/2 - titleWidth/2;
+    int titleY = screenHeight/6;
     DrawText(titleText, titleX, titleY, titleFontSize, WHITE);
 
     // Menu options
-    int startY = SCREEN_HEIGHT/2 - 40;
+    int startY = screenHeight/2 - 40;
     int spacing = 50;
     
     // Draw RESUME option
@@ -289,7 +310,7 @@ void DrawPauseMenu(Game *game)
     int optionFontSize = game->selectedOption == 0 ? 25 : 20;
     Color optionColor = game->selectedOption == 0 ? YELLOW : WHITE;
     int resumeWidth = MeasureText(resumeText, optionFontSize);
-    int resumeX = SCREEN_WIDTH/2 - resumeWidth/2;
+    int resumeX = screenWidth/2 - resumeWidth/2;
     
     // Draw selector if this option is selected
     if (game->selectedOption == 0) {
@@ -303,7 +324,7 @@ void DrawPauseMenu(Game *game)
     optionFontSize = game->selectedOption == 1 ? 25 : 20;
     optionColor = game->selectedOption == 1 ? YELLOW : WHITE;
     int returnWidth = MeasureText(returnText, optionFontSize);
-    int returnX = SCREEN_WIDTH/2 - returnWidth/2;
+    int returnX = screenWidth/2 - returnWidth/2;
     
     // Draw selector if this option is selected
     if (game->selectedOption == 1) {
@@ -316,8 +337,8 @@ void DrawPauseMenu(Game *game)
     const char *scoreText = TextFormat("SCORE: %d", game->score);
     int scoreFontSize = 20;
     int scoreWidth = MeasureText(scoreText, scoreFontSize);
-    int scoreX = SCREEN_WIDTH/2 - scoreWidth/2;
-    int scoreY = SCREEN_HEIGHT - 60;
+    int scoreX = screenWidth/2 - scoreWidth/2;
+    int scoreY = screenHeight - 60;
     
     DrawText(scoreText, scoreX, scoreY, scoreFontSize, YELLOW);
 }

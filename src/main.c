@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-08 22:09:52
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-11 14:34:19
+* @Last Modified time: 2025-05-11 16:46:11
 */
 
 /* 
@@ -16,28 +16,44 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "game.h"
+#include "resolution.h"
 
+// Global screen dimensions
+int screenWidth = SCREEN_WIDTH;
+int screenHeight = SCREEN_HEIGHT;
 
 // defining necessary things
 
 int main(void)
 {
-   // We initialize the window first
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Asteroids game in C using Raylib");
+    // Initialize global screen dimensions
+    screenWidth = SCREEN_WIDTH;
+    screenHeight = SCREEN_HEIGHT;
+   
+    // Set a custom trace log callback to ignore non-important trace logs
+    // Helps avoid spamming the console with "Viewport changed" messages when resizing
+    SetTraceLogLevel(LOG_WARNING);
+    
+    // We initialize the window first
+    InitWindow(screenWidth, screenHeight, "Asteroids game in C using Raylib");
+    
+    // Enable vsync
     SetWindowState(FLAG_VSYNC_HINT);
     SetTargetFPS(240);
-    SetExitKey(0);                                                               // disabling the exit key by default
+    
+    // Disable default exit key (escape)
+    SetExitKey(0);
 
-                                                                                 // We initialize the Game itself
+    // Initialize the Game itself
     Game game;
-    initGame(&game);                                                             // we pass the game structure pointer to the initialization of the game
+    initGame(&game);
 
     while(!WindowShouldClose())
     {
+        // We handle the F11 key for fullscreen toggle
         if (IsKeyPressed(KEY_F11))
         {
-            ToggleFullscreen();
-            game.settings.fullscreen = !game.settings.fullscreen;                 // so here we are setting the fullscreen NEW
+            ToggleFullscreenMode(&game);
         }
         
         UpdateGame(&game);

@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 12:46:09
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 23:33:37
+* @Last Modified time: 2025-05-11 16:40:49
 */
 
 
@@ -14,6 +14,10 @@
 #include "asteroids.h"
 #include "utils.h"
 #include <math.h>
+
+// External globals for screen dimensions
+extern int screenWidth;
+extern int screenHeight;
 
 void InitAsteroid(Asteroid *asteroids)
 {
@@ -90,19 +94,19 @@ void SpawnAsteroids(Asteroid *asteroids)
             if (edge == 0)
             {
                 // this will make an asteroid that will spawn from the top
-                asteroids[i].position = (Vector2) { GetRandomValue(0, SCREEN_WIDTH), 0 };
+                asteroids[i].position = (Vector2) { GetRandomValue(0, screenWidth), 0 };
             }
             else if (edge == 1) // Right
             {
-                asteroids[i].position = (Vector2) { SCREEN_WIDTH, GetRandomValue(0, SCREEN_HEIGHT) };
+                asteroids[i].position = (Vector2) { screenWidth, GetRandomValue(0, screenHeight) };
             }
             else if (edge == 2) // BOTTOM
             {
-                asteroids[i].position = (Vector2) { GetRandomValue(0, SCREEN_WIDTH), SCREEN_HEIGHT };
+                asteroids[i].position = (Vector2) { GetRandomValue(0, screenWidth), screenHeight };
             }
             else // Left
             {
-                asteroids[i].position = (Vector2) { 0, GetRandomValue(0, SCREEN_HEIGHT) };
+                asteroids[i].position = (Vector2) { 0, GetRandomValue(0, screenHeight) };
             }
 
             // random velocity we need to do this first

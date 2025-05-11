@@ -2,7 +2,7 @@
 * @Author: karlosiric
 * @Date:   2025-05-09 18:12:58
 * @Last Modified by:   karlosiric
-* @Last Modified time: 2025-05-09 18:23:35
+* @Last Modified time: 2025-05-11 16:41:02
 */
 
 /* 
@@ -15,13 +15,17 @@
 #include "utils.h"
 #include <math.h>
 
+// External globals for screen dimensions
+extern int screenWidth;
+extern int screenHeight;
+
 void InitStars(Star *stars)
 {
     for (int i = 0; i < MAX_STARS; i++)
     {
         // making random positions of the stars at first
-        stars[i].position.x = GetRandomValue(0, SCREEN_WIDTH);
-        stars[i].position.y = GetRandomValue(0, SCREEN_HEIGHT);
+        stars[i].position.x = GetRandomValue(0, screenWidth);
+        stars[i].position.y = GetRandomValue(0, screenHeight);
         // adding stars brigthness levels
         stars[i].brightness = GetRandomValue(10, 100) / 100.0f;
         stars[i].size = GetRandomValue(1, 3);
