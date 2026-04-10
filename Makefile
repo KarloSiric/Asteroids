@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Iinclude -O2
-LDFLAGS = -lraylib -lm
+CFLAGS = -Wall -Iinclude -I/opt/homebrew/include -O2
+LDFLAGS = -L/opt/homebrew/lib -lraylib -lm -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 
 SRCDIR = src
 OBJDIR = obj

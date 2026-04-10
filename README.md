@@ -12,7 +12,19 @@ Built as a focused exercise in game loop architecture, real-time physics, and 2D
 
 ## Screenshots
 
-<!-- Add screenshots or a gameplay GIF here -->
+### Gameplay
+
+![Gameplay Demo](assets/Asteroids1.gif)
+
+![Combat Demo](assets/Asteroids2.gif)
+
+### Interface
+
+![Main Menu](assets/screen1.png)
+
+![Gameplay](assets/screen2.png)
+
+![Game Over](assets/screen3.png)
 
 ---
 

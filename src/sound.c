@@ -39,51 +39,51 @@ void LoadGameSounds(SoundManager *soundManager)
     // Load sound effects - using your specific file names
     
     // Shooting sounds - using alienshoot files
-    if (FileExists("resources/sounds/alienshoot1.wav")) {
-        soundManager->sounds[SOUND_SHOOT] = LoadSound("resources/sounds/alienshoot1.wav");
+    if (FileExists("Resources/sounds/alienshoot1.wav")) {
+        soundManager->sounds[SOUND_SHOOT] = LoadSound("Resources/sounds/alienshoot1.wav");
         soundManager->soundLoaded[SOUND_SHOOT] = true;
     }
     
     // Big explosion - using explosion_1.wav (presumably the largest one)
-    if (FileExists("resources/sounds/explosion_1.wav")) {
-        soundManager->sounds[SOUND_EXPLOSION_BIG] = LoadSound("resources/sounds/explosion_1.wav");
+    if (FileExists("Resources/sounds/explosion_1.wav")) {
+        soundManager->sounds[SOUND_EXPLOSION_BIG] = LoadSound("Resources/sounds/explosion_1.wav");
         soundManager->soundLoaded[SOUND_EXPLOSION_BIG] = true;
     }
     
     // Small explosion - using explosion_3.wav (medium sized one)
-    if (FileExists("resources/sounds/explosion_3.wav")) {
-        soundManager->sounds[SOUND_EXPLOSION_SMALL] = LoadSound("resources/sounds/explosion_3.wav");
+    if (FileExists("Resources/sounds/explosion_3.wav")) {
+        soundManager->sounds[SOUND_EXPLOSION_SMALL] = LoadSound("Resources/sounds/explosion_3.wav");
         soundManager->soundLoaded[SOUND_EXPLOSION_SMALL] = true;
     }
     
     // Thrust sound - using engine.wav
-    if (FileExists("resources/sounds/engine.wav")) {
-        soundManager->sounds[SOUND_THRUST] = LoadSound("resources/sounds/engine.wav");
+    if (FileExists("Resources/sounds/engine.wav")) {
+        soundManager->sounds[SOUND_THRUST] = LoadSound("Resources/sounds/engine.wav");
         soundManager->soundLoaded[SOUND_THRUST] = true;
     }
     
     // Menu selection sound
-    if (FileExists("resources/sounds/menu_select.wav")) {
-        soundManager->sounds[SOUND_MENU_SELECT] = LoadSound("resources/sounds/menu_select.wav");
+    if (FileExists("Resources/sounds/menu_select.wav")) {
+        soundManager->sounds[SOUND_MENU_SELECT] = LoadSound("Resources/sounds/menu_select.wav");
         soundManager->soundLoaded[SOUND_MENU_SELECT] = true;
     }
     
     // Game over sound - you have this as MP3 so we'll use that
-    if (FileExists("resources/sounds/game_over.mp3")) {
-        soundManager->sounds[SOUND_GAME_OVER] = LoadSound("resources/sounds/game_over.mp3");
+    if (FileExists("Resources/sounds/game_over.mp3")) {
+        soundManager->sounds[SOUND_GAME_OVER] = LoadSound("Resources/sounds/game_over.mp3");
         soundManager->soundLoaded[SOUND_GAME_OVER] = true;
     }
     
     // Load music files
-    if (FileExists("resources/music/menu_music.mp3")) {
-        soundManager->menuMusic = LoadMusicStream("resources/music/menu_music.mp3");
+    if (FileExists("Resources/music/menu_music.mp3")) {
+        soundManager->menuMusic = LoadMusicStream("Resources/music/menu_music.mp3");
         SetMusicVolume(soundManager->menuMusic, soundManager->musicVolume);
         soundManager->musicLoaded = true;
     }
     
     // For game music, we'll use menu_music2.mp3 if it exists
-    if (FileExists("resources/music/menu_music2.mp3")) {
-        soundManager->gameMusic = LoadMusicStream("resources/music/menu_music2.mp3");
+    if (FileExists("Resources/music/menu_music2.mp3")) {
+        soundManager->gameMusic = LoadMusicStream("Resources/music/menu_music2.mp3");
         SetMusicVolume(soundManager->gameMusic, soundManager->musicVolume);
     } else if (soundManager->musicLoaded) {
         // Fallback to the same music for both menu and game if separate game music doesn't exist
