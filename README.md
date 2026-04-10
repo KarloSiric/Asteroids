@@ -121,8 +121,6 @@ Asteroids/
 ├── Resources/
 │   ├── sounds/          # Sound effects (.wav)
 │   └── music/           # Background music (.mp3)
-├── bin/                 # Output binary
-├── obj/                 # Build objects
 ├── Makefile
 └── LICENSE
 ```
